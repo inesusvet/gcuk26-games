@@ -3,6 +3,7 @@ package game
 import (
 	"london-eco-rider/assets"
 	"london-eco-rider/internal/audio"
+	"london-eco-rider/internal/input"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -13,6 +14,7 @@ type Game struct {
 	currentState StateType
 	states       map[StateType]State
 	Audio        *audio.AudioSystem
+	Input        *input.Manager
 	FinalScore   int
 }
 
@@ -20,11 +22,13 @@ type Game struct {
 func NewGame() *Game {
 	assets.LoadAssets()
 	audioSys := audio.NewAudioSystem()
+	inputMgr := input.NewManager()
 
 	g := &Game{
 		currentState: StateTitle,
 		states:       make(map[StateType]State),
 		Audio:        audioSys,
+		Input:        inputMgr,
 	}
 
 	g.states[StateTitle] = NewTitleState()

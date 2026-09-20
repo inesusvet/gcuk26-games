@@ -6,7 +6,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -25,7 +24,7 @@ func NewGameOverState(isVictory bool, score int) *GameOverState {
 func (s *GameOverState) Enter() {}
 
 func (s *GameOverState) Update(g *Game) StateType {
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if g.Input.IsConfirmJustPressed() {
 		return StateTitle
 	}
 	return g.currentState
@@ -49,7 +48,7 @@ func (s *GameOverState) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("FINAL ECO SCORE: %06d", s.FinalScore), 230, 150)
 	ebitenutil.DebugPrintAt(screen, "Thank you for recycling plastic bottles!", 180, 190)
 
-	ebitenutil.DebugPrintAt(screen, "PRESS SPACE OR ENTER TO RESTART", 195, 240)
+	ebitenutil.DebugPrintAt(screen, "PRESS A / SPACE / ENTER TO RESTART", 185, 240)
 }
 
 func (s *GameOverState) Exit() {}

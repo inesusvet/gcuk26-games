@@ -10,7 +10,6 @@ import (
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type PlayState struct {
@@ -140,11 +139,11 @@ func (s *PlayState) Update(g *Game) StateType {
 	}
 
 	// Inputs
-	pedalForward := ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.IsKeyPressed(ebiten.KeyD)
-	pedalBack := ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.IsKeyPressed(ebiten.KeyA)
-	isJumping := inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsKeyJustPressed(ebiten.KeyUp) || inpututil.IsKeyJustPressed(ebiten.KeyW)
-	isInteractKey := isJumping || inpututil.IsKeyJustPressed(ebiten.KeyE) || inpututil.IsKeyJustPressed(ebiten.KeyEnter)
-	triggerBoost := inpututil.IsKeyJustPressed(ebiten.KeyShiftLeft) || inpututil.IsKeyJustPressed(ebiten.KeyJ)
+	pedalForward := g.Input.IsMoveRight()
+	pedalBack := g.Input.IsMoveLeft()
+	isJumping := g.Input.IsJumpJustPressed()
+	isInteractKey := g.Input.IsInteractJustPressed()
+	triggerBoost := g.Input.IsTurboJustPressed()
 
 	if isJumping {
 		g.Audio.PlayJump()
@@ -313,7 +312,7 @@ func (s *PlayState) handleBikeShopInteraction(isInteractKey bool, g *Game) {
 		if !s.UnlockedBike {
 			if !s.SelectingColor {
 				if s.Bottles >= 3 {
-					s.PromptMsg = "PRESS SPACE / E / ENTER TO RECYCLE BOTTLES & SELECT BIKE! 🚴"
+					s.PromptMsg = "PRESS A / SPACE / E TO RECYCLE BOTTLES & SELECT BIKE! 🚴"
 					if isInteractKey {
 						s.SelectingColor = true
 						g.Audio.PlayBell()
@@ -322,17 +321,17 @@ func (s *PlayState) handleBikeShopInteraction(isInteractKey bool, g *Game) {
 					s.PromptMsg = fmt.Sprintf("Collect %d more Plastic Bottle(s) on pavement for the Bike Shop!", 3-s.Bottles)
 				}
 			} else {
-				s.PromptMsg = "SELECT BIKE COLOR: Press [1] RED | [2] BLUE | [3] GOLD"
+				s.PromptMsg = "SELECT BIKE COLOR: Press [A/1] RED | [B/2] BLUE | [X/3] GOLD"
 				chosenColor := entity.BikeColorRed
 				selected := false
 
-				if inpututil.IsKeyJustPressed(ebiten.Key1) || inpututil.IsKeyJustPressed(ebiten.KeyDigit1) {
+				if g.Input.IsColor1JustPressed() {
 					chosenColor = entity.BikeColorRed
 					selected = true
-				} else if inpututil.IsKeyJustPressed(ebiten.Key2) || inpututil.IsKeyJustPressed(ebiten.KeyDigit2) {
+				} else if g.Input.IsColor2JustPressed() {
 					chosenColor = entity.BikeColorBlue
 					selected = true
-				} else if inpututil.IsKeyJustPressed(ebiten.Key3) || inpututil.IsKeyJustPressed(ebiten.KeyDigit3) {
+				} else if g.Input.IsColor3JustPressed() {
 					chosenColor = entity.BikeColorGold
 					selected = true
 				}
@@ -352,7 +351,7 @@ func (s *PlayState) handleBikeShopInteraction(isInteractKey bool, g *Game) {
 			}
 		} else {
 			if s.Bottles > 0 {
-				s.PromptMsg = "PRESS SPACE / E TO DUMP BOTTLES FOR BONUS SCORE! ♻️"
+				s.PromptMsg = "PRESS A / SPACE / E TO DUMP BOTTLES FOR BONUS SCORE! ♻️"
 				if isInteractKey {
 					s.Score += s.Bottles * 200
 					s.Bottles = 0

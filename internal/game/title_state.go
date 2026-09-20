@@ -6,7 +6,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -19,7 +18,7 @@ func NewTitleState() *TitleState {
 func (s *TitleState) Enter() {}
 
 func (s *TitleState) Update(g *Game) StateType {
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) || inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+	if g.Input.IsConfirmJustPressed() {
 		return StatePlay
 	}
 	return StateTitle
@@ -63,12 +62,18 @@ func (s *TitleState) Draw(screen *ebiten.Image) {
 	drawShowcaseItemShort(screen, assets.RedBusImage, 435, 115, 36, "RED BUS", "Jump Over!")
 
 	// Solid Steady Non-Flashing Start Button
-	vector.DrawFilledRect(screen, 180, 255, 280, 28, color.RGBA{0, 180, 240, 240}, false)
-	vector.StrokeRect(screen, 180, 255, 280, 28, 1, color.RGBA{255, 255, 255, 255}, false)
-	ebitenutil.DebugPrintAt(screen, "PRESS SPACE TO START", 230, 262)
+	vector.DrawFilledRect(screen, 170, 252, 300, 28, color.RGBA{0, 180, 240, 240}, false)
+	vector.StrokeRect(screen, 170, 252, 300, 28, 1, color.RGBA{255, 255, 255, 255}, false)
+	ebitenutil.DebugPrintAt(screen, "PRESS SPACE / A / START TO BEGIN", 195, 259)
+
+	// Gamepad Connection Indicator
+	/* (drawn in controls footer or header) */
 
 	// Controls Footer
-	ebitenutil.DebugPrintAt(screen, "Controls: Move (Arrow Keys / A-D) | Jump (Space) | Turbo (Shift)", 110, 300)
+	ebitenutil.DebugPrintAt(screen, "Controls: Move (D-Pad / Arrows / A-D) | Jump (A / Space) | Turbo (X / Shift)", 75, 290)
+
+	// Secondary Gamepad Note
+	ebitenutil.DebugPrintAt(screen, "🎮 8BitDo M30 Gamepad & Keyboard Primary Controller Support Ready", 100, 308)
 }
 
 func drawShowcaseItemShort(screen *ebiten.Image, img *ebiten.Image, x, y float64, size float64, title string, desc string) {
